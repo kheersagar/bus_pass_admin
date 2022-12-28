@@ -19,7 +19,7 @@ const Home = () => {
     },
     {
       title: "Create User",
-      imageSrc: require("../assets/Image/Icons/list.png"),
+      imageSrc: require("../assets/Image/Icons/add-user.png"),
       route:'create-user'
     },
     {

@@ -190,7 +190,7 @@ const UserInfo = () => {
       </CustomModal>
       {/* loading screen */}
       {/* <FullScreenLoading isLoading={applyLoading} /> */}
-
+      <View className="flex-1 bg-[#FFD652]">
       <ScrollView >
         <Image
           source={{
@@ -198,7 +198,7 @@ const UserInfo = () => {
           }}
           className="w-full h-80 object-cover"
         />
-        <View className=" bg-[#FFD652] min-h-full p-4 px-6">
+        <View className="  min-h-full p-4 px-6">
           <Text className="font-medium text-xl mb-2">
             {first_name + " " + last_name}
           </Text>
@@ -243,6 +243,7 @@ const UserInfo = () => {
           </View>
         </View>
       </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
