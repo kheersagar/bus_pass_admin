@@ -6,7 +6,8 @@ import {
   StatusBar,
   Platform,
   TextInput,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from "react-native";
 import React, { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
@@ -17,6 +18,7 @@ import * as Progress from "react-native-progress";
 import { DocumentTextIcon } from "react-native-heroicons/outline";
 import CustomModal from "../components/Modal";
 import { createNewUser, uploadCSV } from "../API/API";
+const { width, height } = Dimensions.get("window");
 
 const CreateUser = () => {
   const dispatch = useDispatch();
@@ -68,6 +70,7 @@ const CreateUser = () => {
       {/* file upload modal */}
       <CustomModal
         modalVisible={modalVisible}
+        top={height/2}
         handleClose={() => setModalVisible(false)}
       >
         <View className="h-80 absolute bottom-0 w-full  rounded-xl bg-slate-400 ">

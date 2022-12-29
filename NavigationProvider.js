@@ -6,7 +6,6 @@ import Login from "./screens/Login";
 import React from 'react'
 import { useSelector } from 'react-redux';
 import Profile from './screens/Profile';
-import PassStatus from './screens/PassStatus';
 import PassList from './screens/PassList';
 import UserInfo from './screens/UserInfo';
 import CreateUser from './screens/CreateUser';
@@ -30,9 +29,6 @@ const NavigationProvider = () => {
             }} />
             <Stack.Screen name="create-user" component={CreateUser} options={{
               headerShown: false
-            }} />
-            <Stack.Screen name="pass-status" component={PassStatus} options={{
-              headerShown: false,
             }} />
             <Stack.Screen name="test" component={Profile} options={{
               headerShown: false,
