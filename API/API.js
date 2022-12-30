@@ -10,7 +10,7 @@ import { userActions } from "../Slices/userSlice";
 import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 const API = axios.create({
-  baseURL : 'http://192.168.1.38:5000/'
+  baseURL : 'http://192.168.1.38:5000'
 })
 
 API.interceptors.request.use( async (req)=>{
@@ -97,10 +97,13 @@ export const updateProfileImage = (profileImage) =>{
 export const appliedList = (page,limit)=>{
   return async (dispatch) =>{
     try{
+      dispatch(studentActions.setDataIsLoading(true))
       const res = await API.get(`/bus-pass/applied-list?page=${page}&limit=10`)
       dispatch(studentActions.setData(res.data))
     }catch(err){
       console.log(err)
+    }finally{
+      dispatch(studentActions.setDataIsLoading(false))
     }
   }
 }
@@ -127,10 +130,19 @@ export const updatePass = (data) =>{
 export const searchQuery = (data,page) =>{
   return async (dispatch) =>{
     try{
+      dispatch(studentActions.setDataIsLoading(true))
       const res = await API.get(`/bus-pass/applied-list?page=${page}&limit=10&search=${data}`)
       dispatch(studentActions.setQueryData({data:res.data,page}))
     }catch(err){
       console.log(err)
+      Toast.show({
+        type:ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: err.message,
+        button: 'close',
+      })
+    }finally{
+      dispatch(studentActions.setDataIsLoading(false))
     }
   }
 }

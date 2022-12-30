@@ -6,6 +6,7 @@ const initialValue = {
 data: [],
 approveLoading: false,
 delcineLoading: false,
+dataIsLoading : false,
 };
 
 const studentSlice = createSlice({
@@ -30,6 +31,9 @@ reducers: {
   },
   setDeclineLoading(state,action){
     state.delcineLoading = action.payload
+  },
+  setDataIsLoading(state,action){
+    state.dataIsLoading = action.payload
   }
 
 },
