@@ -10,7 +10,8 @@ import { userActions } from "../Slices/userSlice";
 import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 const API = axios.create({
-  baseURL : 'http://192.168.1.38:5000'
+  // baseURL : 'http://192.168.1.38:5000'
+  baseURL : 'https://bus-pass-server.onrender.com/'
 })
 
 API.interceptors.request.use( async (req)=>{

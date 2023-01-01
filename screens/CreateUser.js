@@ -101,10 +101,11 @@ const CreateUser = () => {
         </View>
       </CustomModal>
       {/*  */}
+      <View className="flex-1">
       <ScrollView showsVerticalScrollIndicator={false}>
       <TouchableOpacity
         onPress={pickDocument}
-        className="h-20 w-full bg-slate-300 mt-2 rounded-full items-center justify-center"
+        className="h-16 w-full bg-slate-300 mt-2 rounded-full items-center justify-center"
       >
         <Text className="font-bold text-2xl text-gray-400">Upload CSV</Text>
       </TouchableOpacity>
@@ -127,9 +128,9 @@ const CreateUser = () => {
           isValid,
           touched,
         }) => (
-          <View className="mt-4">
+          <View className="mt-4 ">
             <View className="flex-row space-x-2">
-              <View className="h-20 w-1/2 flex-1 mb-4">
+              <View className="h-16 w-1/2 flex-1 mb-4">
                 <TextInput                
                   name="username"
                   value={values.username}
@@ -140,7 +141,7 @@ const CreateUser = () => {
                 />
                 {touched.username&& errors.username && <Text className="text-red-600">*{errors.username}</Text>}
               </View>
-              <View className="h-20 w-1/2 flex-1 mb-4">
+              <View className="h-16 w-1/2 flex-1 mb-4">
                 <TextInput
                   name="password"
                   value={values.password}
@@ -153,7 +154,7 @@ const CreateUser = () => {
               </View>
             </View>
             <View className="flex-row space-x-2">
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
               <TextInput
                 name="first_name"
                 value={values.first_name}
@@ -164,7 +165,7 @@ const CreateUser = () => {
               />
               {touched.first_name && errors.first_name && <Text className="text-red-600">*{errors.first_name}</Text>}
             </View>
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
 
               <TextInput
                 name="last_name"
@@ -178,7 +179,7 @@ const CreateUser = () => {
             </View>
             </View>
             <View className="flex-row space-x-2">
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
               <TextInput
                 name="email"
                 value={values.email}
@@ -189,7 +190,7 @@ const CreateUser = () => {
               />
               {touched.email && errors.email && <Text className="text-red-600">*{errors.email}</Text>}
             </View>
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
               <TextInput
                 name="branch"
                 value={values.branch}
@@ -202,7 +203,7 @@ const CreateUser = () => {
             </View>
             </View>
             <View className="flex-row space-x-2">
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
               <TextInput
                 name="semester"
                 placeholder="Semester"
@@ -214,7 +215,7 @@ const CreateUser = () => {
               />
               {touched.semester && errors.semester && <Text className="text-red-600">*{errors.semester}</Text>}
             </View>
-            <View className="h-20 w-1/2 flex-1 mb-4">
+            <View className="h-16 w-1/2 flex-1 mb-4">
 
               <TextInput
                 name="phone_no"
@@ -251,7 +252,7 @@ const CreateUser = () => {
               />
               {touched.pickup_point && errors.pickup_point && <Text className="text-red-600">*{errors.pickup_point}</Text>}
             </View>
-            <View className="px-2 py-2 ">
+            <View className="px-2 py-2">
               <TouchableOpacity
                 onPress={handleSubmit}
                 className="w-full mt-2 bg-blue-900 rounded-full h-12 items-center justify-center"
@@ -267,6 +268,7 @@ const CreateUser = () => {
         )}
       </Formik>
       </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
