@@ -3,7 +3,7 @@ import deleteValue from "../hooks/deleteValue";
 import getValue from "../hooks/getValue";
 
 const initialValue = {
-  isAuth: getValue("isAuth"),
+  isAuth:false,
   userData: "",
   receipt_img: "",
   notificationLoading: false,
@@ -12,6 +12,7 @@ const initialValue = {
   busPassDetails: { },
   profileLoading:false,
   applyLoading:false,
+  logoutLoading:false,
 };
 
 const userSlice = createSlice({
@@ -24,9 +25,8 @@ const userSlice = createSlice({
     setUserData(state, action) {
       state.userData = action.payload;
     },
-    handleLogout(state, action) {
-      deleteValue("isAuth");
-      state.isAuth = false;
+    setLogout(state, action) {
+      state.logoutLoading = action.payload;
     },
     setRecieptImg(state, action) {
       state.receipt_img = action.payload;

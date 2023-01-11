@@ -9,12 +9,15 @@ import Profile from './screens/Profile';
 import PassList from './screens/PassList';
 import UserInfo from './screens/UserInfo';
 import CreateUser from './screens/CreateUser';
+import AddValidator from './screens/AddValidator';
+import ForgotPassword from './screens/ForgotPassword';
+import { navigationRef } from './RootNavigation';
 
 const NavigationProvider = () => {
   const Stack = createNativeStackNavigator();
   const { isAuth } = useSelector(state => state.user)
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator >
         {isAuth ?
           <>
@@ -30,14 +33,22 @@ const NavigationProvider = () => {
             <Stack.Screen name="create-user" component={CreateUser} options={{
               headerShown: false
             }} />
+            <Stack.Screen name="add-validator" component={AddValidator} options={{
+              headerShown: false,
+            }} />
             <Stack.Screen name="test" component={Profile} options={{
               headerShown: false,
             }} />
           </>
           :
+          <>
           <Stack.Screen name="Login" component={Login} options={{
             headerShown: false
           }} />
+          <Stack.Screen name="forgot-password" component={ForgotPassword}  options={{
+            headerShown: false,
+          }} />
+          </>
         }
       </Stack.Navigator>
     </NavigationContainer>

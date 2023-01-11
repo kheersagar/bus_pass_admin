@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialValue = {
   isLoading : false,
+  isOtp:false,
 } 
 
 const loginSlice = createSlice({
@@ -10,6 +11,10 @@ const loginSlice = createSlice({
   reducers:{
     setLoading(state,action){
       state.isLoading = action.payload
+    },
+    setIsOtp(state,action){
+      console.log("values",action)
+      state.isOtp = action.payload
     }
   }
 })

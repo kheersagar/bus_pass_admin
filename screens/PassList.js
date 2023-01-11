@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { appliedList, searchQuery } from "../API/API";
@@ -14,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native-gesture-handler";
 import { studentActions } from "../Slices/studentSlice";
 import FullScreenLoading from "../components/FullScreenLoading";
+import { StatusBar as ExpoBar } from "expo-status-bar";
 
 const PassList = () => {
   const dispatch = useDispatch();
@@ -22,7 +24,8 @@ const PassList = () => {
   const [searchData, setSearchData] = useState(""); //search query string
   const [isSearch, setSearch] = useState(false); //check if search query is empty or not
   const [isQuerySearch, setIsQuerySearch] = useState(false); //check if search query data is rendered in flatlist or not
-  const { data, dataIsLoading } = useSelector((state) => state.student);
+  const { data, dataIsLoading ,refreshing} = useSelector((state) => state.student);
+
   useEffect(() => {
     // cleanup code
     return () => {
@@ -34,7 +37,7 @@ const PassList = () => {
   useEffect(() => {
     // check if search query is empty then fetch data
     if (searchData == "") {
-      setPage(1)
+      setPage(1);
       dispatch(studentActions.clearData());
       dispatch(appliedList(1));
       setIsQuerySearch(false);
@@ -78,6 +81,7 @@ const PassList = () => {
         marginTop: Platform.OS === "android" ? StatusBar.currentHeight : null,
       }}
     >
+    <ExpoBar style="dark" translucent={true} hidden={false} />
       <View className="px-4 mt-2 flex-1">
         <View className="relative">
           <TextInput
@@ -109,6 +113,7 @@ const PassList = () => {
             data={data}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={() => dispatch( appliedList(page,'PULL_REFRESH'))} />}
             onEndReachedThreshold={0.2}
             onEndReached={(e) => {
               setPage((prev) => prev + 1);

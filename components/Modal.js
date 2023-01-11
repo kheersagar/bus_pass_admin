@@ -1,14 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Alert,
-  Modal,
-  TouchableOpacity,
-  View,
-  Text,
   Dimensions,
   StyleSheet,
 } from "react-native";
-import GestureRecognizer from "react-native-swipe-gestures";
 import Animated, {
   Extrapolate,
   interpolate,

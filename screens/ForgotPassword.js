@@ -1,24 +1,41 @@
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { LoginUser } from "../API/API";
+import { confirmPassowrd, forgotPassowrd } from "../API/API";
 import { Formik } from "formik";
 import * as yup from "yup";
 import * as Progress from "react-native-progress";
+import { loginActions } from "../Slices/loginSlice";
 import { StatusBar as ExpoBar } from "expo-status-bar";
 
-const Login = () => {
-  const { isLoading } = useSelector((state) => state.login);
+const ForgotPassword = () => {
+  const { isLoading,isOtp } = useSelector((state) => state.login);
   const navigate = useNavigation();
   const dispatch = useDispatch();
-  const loginValidationSchema = yup.object().shape({
-    username: yup.string().required("Username is Required"),
-    password: yup
-      .string()
-      .min(5, ({ min }) => `Password must be at least ${min} characters`)
-      .required("Password is required"),
+  const emailInitialValues = {
+    email:""
+  }
+  const otpInitialValues = {
+    password:'',
+    otp: ""
+  }
+  const emailValidationSchema = yup.object().shape({
+    email: yup.string().required("*Email is Required"),
   });
+  const otpValidationSchema = yup.object().shape({
+    password: yup
+    .string()
+    .min(6, ({ min }) => `Password must be at least ${min} characters`)
+    .required("*Password is required"),
+    otp: yup.string().length(6).required("*OTP is Required"),
+  });
+
+  useEffect(()=>{
+    return() =>{
+     dispatch( loginActions.setIsOtp(false))
+    }
+  },[])
   return (
     <View className="relative flex-1 justify-center items-center bg-[#FFFFFF]">
     <ExpoBar style="dark" translucent={true} hidden={false} />
@@ -35,10 +52,14 @@ const Login = () => {
         <Image source={require("../assets/icon.png")} className="w-36 h-36" />
       </View>
       <Formik
-        initialValues={{ username: "", password: "" }}
-        validationSchema={loginValidationSchema}
+        initialValues={isOtp ? otpInitialValues : emailInitialValues}
+        enableReinitialize
+        validationSchema={isOtp ? otpValidationSchema :  emailValidationSchema}
         onSubmit={(values) => {
-          dispatch(LoginUser(values, navigate));
+          console.log(values)
+          isOtp ? 
+          dispatch(confirmPassowrd(values,navigate))
+          :dispatch(forgotPassowrd(values, navigate));
         }}
       >
         {({
@@ -51,26 +72,31 @@ const Login = () => {
           touched,
         }) => (
           <View className="w-full px-6 mt-2">
+
+           { !isOtp ?
+           <>
             <TextInput
-            keyboardType="email-address"
-              name="username"
-              onChangeText={handleChange("username")}
-              value={values.username}
-              placeholder="Username"
+              name="email"
+              onChangeText={handleChange("email")}
+              value={values.email}
+              placeholder="Email"
               className=" h-16 w-full border-2 rounded-xl pl-4  placeholder:font-bold placeholder:text-xl"
             />
-            {touched.username && errors.username && (
+            {touched.email && errors.email && (
               <Text className="text-red-600 font-medium text-lg mt-2">
-                {errors.username}
+                {errors.email}
               </Text>
             )}
-
-            <TextInput
+           </>
+           
+           :
+           <>
+           <TextInput
               name="password"
               onChangeText={handleChange("password")}
               value={values.password}
               secureTextEntry
-              placeholder="Password"
+              placeholder="New Password"
               className=" h-16 w-full border-2 rounded-xl pl-4 mt-4 placeholder:font-bold placeholder:text-xl"
             />
             {touched.password && errors.password && (
@@ -78,17 +104,27 @@ const Login = () => {
                 {errors.password}
               </Text>
             )}
-            <TouchableOpacity onPress={() => navigate.navigate("forgot-password")} className="mt-2">
-              <Text className="font-extrabold text-[#060F2F] text-right pr-4 underline text-lg">
-                Forgot Password?
+            <TextInput
+              name="otp"
+              onChangeText={handleChange("otp")}
+              value={values.otp}
+              placeholder="OTP"
+              keyboardType="numeric"
+              className=" h-16 w-full border-2 rounded-xl pl-4 mt-4 placeholder:font-bold placeholder:text-xl"
+            />
+            {touched.otp && errors.otp && (
+              <Text className="text-red-600 font-medium text-lg mt-2">
+                {errors.otp}
               </Text>
-            </TouchableOpacity>
+            )}
+           </>
+           }
             <TouchableOpacity
               onPress={handleSubmit}
               className="bg-[#060F2F] mt-10 h-16 rounded-full justify-center items-center"
             >
               {!isLoading ? (
-                <Text className="text-white text-xl">Login</Text>
+                <Text className="text-white text-xl">{isOtp ?"Submit" :"Get code"}</Text>
               ) : (
                 <Progress.Circle size={30} indeterminate={true} />
               )}
@@ -100,4 +136,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

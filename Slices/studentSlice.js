@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import deleteValue from "../hooks/deleteValue";
-import getValue from "../hooks/getValue";
 
 const initialValue = {
 data: [],
 approveLoading: false,
-delcineLoading: false,
+declineLoading: false,
 dataIsLoading : false,
+refreshing:false,
 };
 
 const studentSlice = createSlice({
@@ -30,10 +29,14 @@ reducers: {
     state.approveLoading = action.payload
   },
   setDeclineLoading(state,action){
-    state.delcineLoading = action.payload
+  
+    state.declineLoading = action.payload
   },
   setDataIsLoading(state,action){
     state.dataIsLoading = action.payload
+  },
+  setRefreshing(state,action){
+    state.refreshing = action.payload
   }
 
 },

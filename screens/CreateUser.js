@@ -19,6 +19,7 @@ import { DocumentTextIcon } from "react-native-heroicons/outline";
 import CustomModal from "../components/Modal";
 import { createNewUser, uploadCSV } from "../API/API";
 const { width, height } = Dimensions.get("window");
+import { StatusBar as ExpoBar } from "expo-status-bar";
 
 const CreateUser = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const CreateUser = () => {
     last_name: yup.string().required("Last Name is Required"),
     branch: yup.string().required("Branch is Required"),
     semester: yup.string().required("Semester is Required"),
-    phone_no: yup.string().length(10).required("Phone No. is Required"),
+    phone_no: yup.string().min(10, ({ min }) => `Phone No must be at least ${min} characters`).max(10, ({ max }) => `Phone No must be ${max} characters`).required("Phone No. is Required"),
     address: yup.string().required("Address is Required"),
     pickup_point: yup.string().required("Pickup Point is Required"),
   });
@@ -67,6 +68,7 @@ const CreateUser = () => {
         marginTop: Platform.OS === "android" ? StatusBar.currentHeight : null,
       }}
     >
+    <ExpoBar style="dark" translucent={true} hidden={false} />
       {/* file upload modal */}
       <CustomModal
         modalVisible={modalVisible}
@@ -101,7 +103,7 @@ const CreateUser = () => {
         </View>
       </CustomModal>
       {/*  */}
-      <View className="flex-1">
+      <View className="flex-1 pt-10">
       <ScrollView showsVerticalScrollIndicator={false}>
       <TouchableOpacity
         onPress={pickDocument}
@@ -115,8 +117,8 @@ const CreateUser = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={userSchema}
-        onSubmit={(values) => {
-          dispatch(createNewUser(values))
+        onSubmit={(values,{resetForm}) => {
+          dispatch(createNewUser(values,resetForm))
         }}
       >
         {({
@@ -134,7 +136,7 @@ const CreateUser = () => {
                 <TextInput                
                   name="username"
                   value={values.username}
-                  placeholder="username"
+                  placeholder="Username"
                   onChangeText={handleChange("username")}
                   onBlur={() => handleBlur("username")}
                   className={`border ${touched.username&& errors.username ? 'border-red-600' : 'border-slate-400'} px-2 rounded-lg  flex-1 font-bold placeholder:text-gray-400 placeholder:opacity-70 placeholder:text-xl`}
@@ -145,7 +147,7 @@ const CreateUser = () => {
                 <TextInput
                   name="password"
                   value={values.password}
-                  placeholder="password"
+                  placeholder="Password"
                   onChangeText={handleChange("password")}
                   onBlur={() => handleBlur("password")}
                   className={`border ${touched.password && errors.password ? 'border-red-600' : 'border-slate-400'} px-2 rounded-lg flex-1 font-bold placeholder:text-gray-400 placeholder:opacity-70 placeholder:text-xl`}
@@ -186,6 +188,7 @@ const CreateUser = () => {
                 placeholder="Email"
                 onChangeText={handleChange("email")}
                 onBlur={() => handleBlur("email")}
+                keyboardType="email-address"
                 className={`border ${touched.email && errors.email ? 'border-red-600' : 'border-slate-400'} px-2 rounded-lg  flex-1 font-bold placeholder:text-gray-400 placeholder:opacity-70 placeholder:text-xl`}
               />
               {touched.email && errors.email && <Text className="text-red-600">*{errors.email}</Text>}

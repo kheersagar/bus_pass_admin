@@ -8,6 +8,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  Keyboard,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +22,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Progress from "react-native-progress";
 const { width, height } = Dimensions.get("window");
+import { StatusBar as ExpoBar } from "expo-status-bar";
 
 const UserInfo = () => {
   const dispatch = useDispatch();
@@ -31,8 +33,30 @@ const UserInfo = () => {
   const [declineModal, setDeclineModal] = useState(false);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [busNo, setBusNo] = useState(0);
+  const [busNo, setBusNo] = useState("");
   const [decline_reason, setDeclineReason] = useState("");
+  const [isFocused, setIsFocussed] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsFocussed(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsFocussed(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   const {
     data: {
       user_details,
@@ -62,7 +86,19 @@ const UserInfo = () => {
     setShow(false);
     setDate(currentDate);
   };
-
+  function formatDate(d) {
+    const date = new Date(d);
+    var dd = date.getDate();
+    var mm = date.getMonth() + 1;
+    var yyyy = date.getFullYear();
+    if (dd < 10) {
+      dd = "0" + dd;
+    }
+    if (mm < 10) {
+      mm = "0" + mm;
+    }
+    return (d = dd + "/" + mm + "/" + yyyy);
+  }
   return (
     <SafeAreaView
       className="flex-1"
@@ -70,6 +106,7 @@ const UserInfo = () => {
         marginTop: Platform.OS === "android" ? StatusBar.currentHeight : null,
       }}
     >
+      <ExpoBar style="dark" translucent={true} hidden={false} />
       {/* receipt image modal */}
       {modalVisible && (
         <CustomModal
@@ -120,7 +157,7 @@ const UserInfo = () => {
       {approveModal && (
         <CustomModal
           modalVisible={approveModal}
-          top={height / 2}
+          top={isFocused ? height / 13 : height / 2}
           handleClose={() => setApproveModal(false)}
         >
           <View className="h-72 absolute bottom-0 w-full  rounded-xl bg-white ">
@@ -142,9 +179,7 @@ const UserInfo = () => {
                 className="w-1/2 justify-center items-center"
               >
                 <Text className="h-10 w-full border-b text-center text-lg font-bold">
-                  {date
-                    ? `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-                    : "Valid till DD/MM/YYY"}{" "}
+                  {date ? `${formatDate(date)}` : "Valid till DD/MM/YYY"}{" "}
                 </Text>
               </TouchableOpacity>
               {show && (
@@ -162,9 +197,11 @@ const UserInfo = () => {
                 className="h-10 w-1/2 border-b text-center text-lg font-bold"
                 value={busNo}
                 onChangeText={(data) => setBusNo(data)}
+                onFocus={(e) => setIsFocussed(true)}
+                onSubmitEditing={(e) => setIsFocussed(false)}
               />
               <TouchableOpacity
-                className="flex-row  items-center w-full h-14 rounded-full p-2 px-4 mt-4 bg-green-600"
+                className="items-center justify-center w-full h-14 rounded-full p-2 px-4 mt-4 bg-green-600"
                 onPress={() =>
                   dispatch(
                     updatePass({
@@ -178,19 +215,15 @@ const UserInfo = () => {
                   )
                 }
               >
-                <Text
-                  className={`text-white font-medium text-lg flex-1 w-86 text-center`}
-                >
-                  {approveLoading ? (
-                    <Progress.Circle
-                      size={50}
-                      indeterminate={true}
-                      color="black"
-                    />
-                  ) : (
-                    "Approve"
-                  )}
-                </Text>
+                {approveLoading ? (
+                  <Progress.Circle size={25} color="white" />
+                ) : (
+                  <Text
+                    className={`text-white font-medium text-lg flex-1 w-86 text-center`}
+                  >
+                    Approve
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -200,7 +233,7 @@ const UserInfo = () => {
       {declineModal && (
         <CustomModal
           modalVisible={declineModal}
-          top={height / 2}
+          top={isFocused ? height / 13 : height / 2}
           handleClose={() => setDeclineModal(false)}
         >
           <View className="h-72 absolute bottom-0 w-full  rounded-xl bg-white pb-4">
@@ -210,7 +243,7 @@ const UserInfo = () => {
             <View className="w-full items-end z-10">
               <TouchableOpacity
                 onPress={() => setDeclineModal(false)}
-                className=" mt-2 mr-2 w-24 h-12 rounded-full justify-center items-center px-4 bg-black"
+                className=" my-2 mr-2 w-24 h-12 rounded-full justify-center items-center px-4 bg-black"
               >
                 <Text className="text-white text-xl font-semibold">Close</Text>
               </TouchableOpacity>
@@ -223,32 +256,26 @@ const UserInfo = () => {
                 className="w-full border-gray-300 border rounded-lg h-4/6 text-center font-black placeholder:font-bold placeholder:text-2xl "
               />
               <TouchableOpacity
-                className="flex-row  items-center w-full h-14 rounded-full p-2 px-4 mt-4 bg-red-600"
+                className="items-center justify-center w-full h-14 rounded-full p-2 px-4 mt-4  bg-red-600"
                 onPress={() =>
                   dispatch(
                     updatePass({
                       bus_pass_id,
                       user_id,
                       status: 3,
-                      decline_reason,
+                      decline_reason: decline_reason,
                       navigate,
                     })
                   )
                 }
               >
-                <Text
-                  className={`text-white font-medium text-lg flex-1 w-86 text-center`}
-                >
-                  {declineLoading ? (
-                    <Progress.Circle
-                      size={50}
-                      indeterminate={true}
-                      color="black"
-                    />
-                  ) : (
-                    "Decline"
-                  )}
-                </Text>
+                {declineLoading ? (
+                  <Progress.Circle size={25} color="white" />
+                ) : (
+                  <Text className="text-white font-medium text-lg flex-1 w-86 text-center">
+                    Decline
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -259,22 +286,31 @@ const UserInfo = () => {
       <View className="flex-1 bg-[#FFD652]">
         <ScrollView>
           <Image
+            resizeMode="contain"
             source={{
               uri: profile_img,
             }}
-            className="w-full h-80 object-cover"
+            className="w-full h-52 object-cover rounded-lg"
           />
           <View className="  min-h-full p-4 px-6">
-            <Text className="font-medium text-xl mb-2">
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
               {first_name + " " + last_name}
             </Text>
-            <Text className="font-medium text-xl mb-2">{branch}</Text>
-            <Text className="font-medium text-xl mb-2">
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
+              {branch}
+            </Text>
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
               {semester} semester
             </Text>
-            <Text className="font-medium text-xl mb-2">{phone_no}</Text>
-            <Text className="font-medium text-xl mb-2">{address}</Text>
-            <Text className="font-medium text-xl mb-4">{email}</Text>
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
+              {phone_no}
+            </Text>
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
+              {address}
+            </Text>
+            <Text className="font-extrabold text-xl mb-2 bg-yellow-500 rounded-lg px-2 py-2">
+              {email}
+            </Text>
             {/* receipt */}
             {receipt_img && (
               <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -293,7 +329,7 @@ const UserInfo = () => {
                 onPress={() => setApproveModal(true)}
               >
                 <Text
-                  className={`text-white font-medium text-lg flex-1 w-86 text-center`}
+                  className={`text-white font-extrabold text-xl flex-1 w-86 text-center`}
                 >
                   Approve
                 </Text>
@@ -303,7 +339,7 @@ const UserInfo = () => {
                 onPress={() => setDeclineModal(true)}
               >
                 <Text
-                  className={`text-white font-medium text-lg flex-1 w-86 text-center`}
+                  className={`text-white font-extrabold text-xl flex-1 w-86 text-center`}
                 >
                   Decline
                 </Text>
